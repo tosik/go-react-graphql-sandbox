@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:10-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - PGPASSWORD=password
+      - POSTGRES_DB=development
+      - DATABASE_HOST=localhost
+    volumes:
+      - $PWD/docker/db/init:/docker-entrypoint-initdb.d
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - 27017:27017
+    volumes:
+      - ./tmp/db:/data/db
+      - ./tmp/configdb:/data/configdb
