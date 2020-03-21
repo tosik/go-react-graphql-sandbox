@@ -31,8 +31,8 @@ func main() {
 
   // put sample data
   books := []model.Book{
-    { ID: "1", Title: "Alice In Wonderland", Price: 123 },
-    { ID: "2", Title: "Cinderella", Price: 345 },
+    { ID: "1", Title: "Alice In Wonderland", Price: 123, Foo: 98765 },
+    { ID: "2", Title: "Cinderella", Price: 345, Foo: "STRING TYPE" },
   }
   for _, book := range books {
     log.Println(book)
