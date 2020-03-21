@@ -2,10 +2,13 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar Any
+
 type Book {
   id: ID!
   title: String!
   price: Int!
+  foo: Any!
 }
 
 type Query {
@@ -15,6 +18,7 @@ type Query {
 input NewBook {
   title: String!
   price: Int!
+  foo: Any!
 }
 
 type Mutation {
