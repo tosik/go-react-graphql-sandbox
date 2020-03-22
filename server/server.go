@@ -35,7 +35,6 @@ func main() {
     { ID: "2", Title: "Cinderella", Price: 345, Foo: "STRING TYPE" },
   }
   for _, book := range books {
-    log.Println(book)
     err = coll.Put(ctx, &book)
     if err != nil {
       log.Fatalln(err)
