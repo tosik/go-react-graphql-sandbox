@@ -12,5 +12,6 @@ require (
 	gocloud.dev/docstore/mongodocstore v0.19.0
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sys v0.0.0-20200321134203-328b4cd54aae // indirect
+	golang.org/x/tools v0.0.0-20200321224714-0d839f3cf2ed // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

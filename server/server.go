@@ -10,6 +10,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 
 	"gocloud.dev/docstore"
+	_ "gocloud.dev/docstore/memdocstore"
 	_ "gocloud.dev/docstore/mongodocstore"
 
 	"github.com/tosik/go-react-graphql-sandbox/server/graph"
@@ -22,7 +23,8 @@ const defaultPort = "8080"
 func main() {
 	ctx := context.Background()
 
-	url := "mongo://foo/books?id_field=ID"
+	// url := "mongo://foo/books?id_field=ID"
+	url := "mem://foo/ID"
 
 	coll, err := docstore.OpenCollection(ctx, url)
 	defer coll.Close()
