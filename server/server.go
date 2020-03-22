@@ -18,6 +18,8 @@ import (
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/model"
 )
 
+//go:generate sh -c "go run gitlab.com/hookactions/gqlgen-relay -pkg model -name Book -type *Book -cursor > graph/model/book_relay.go"
+
 const defaultPort = "8080"
 
 func main() {
