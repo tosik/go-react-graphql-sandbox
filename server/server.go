@@ -25,6 +25,7 @@ func main() {
 	url := "mongo://foo/books?id_field=ID"
 
 	coll, err := docstore.OpenCollection(ctx, url)
+	defer coll.Close()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -58,6 +59,4 @@ func main() {
 		log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 		log.Fatal(http.ListenAndServe(":"+port, nil))
 	}
-
-	defer coll.Close()
 }
