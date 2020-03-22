@@ -32,35 +32,43 @@ func main() {
 	defer coll.Close()
 	if err != nil {
 		log.Fatalln(err)
+		panic(err)
 	}
 
-	// put sample data
+	if err := putSampleData(ctx, coll); err != nil {
+		log.Fatalln(err)
+	}
+	listen(coll)
+}
+
+func putSampleData(ctx context.Context, coll *docstore.Collection) error {
 	books := []model.Book{
 		{ID: "1", Title: "Alice In Wonderland", Price: 123, Foo: 98765},
 		{ID: "2", Title: "Cinderella", Price: 345, Foo: "STRING TYPE"},
 	}
 	for _, book := range books {
-		err = coll.Put(ctx, &book)
-		if err != nil {
-			log.Fatalln(err)
+		if err := coll.Put(ctx, &book); err != nil {
+			return err
 		}
 	}
 
-	{
-		port := os.Getenv("PORT")
-		if port == "" {
-			port = defaultPort
-		}
+	return nil
+}
 
-		srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
-			Resolvers: &graph.Resolver{
-				Coll: coll,
-			}}))
-
-		http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-		http.Handle("/query", srv)
-
-		log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-		log.Fatal(http.ListenAndServe(":"+port, nil))
+func listen(coll *docstore.Collection) {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
 	}
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
+		Resolvers: &graph.Resolver{
+			Coll: coll,
+		}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
