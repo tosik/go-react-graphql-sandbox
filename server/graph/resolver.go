@@ -3,7 +3,7 @@
 package graph
 
 import (
-  "gocloud.dev/docstore"
+	"gocloud.dev/docstore"
 )
 
 // This file will not be regenerated automatically.
@@ -11,5 +11,5 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-  Coll *docstore.Collection
+	Coll *docstore.Collection
 }

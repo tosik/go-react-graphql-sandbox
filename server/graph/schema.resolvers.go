@@ -5,51 +5,51 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
-  "math/rand"
-  "fmt"
+	"math/rand"
 
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/generated"
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/model"
 )
 
 func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) (*model.Book, error) {
-  newBook := model.Book {
-    ID : fmt.Sprint(rand.Int()),
-    Title : input.Title,
-    Price : input.Price,
-    Foo : input.Foo,
-  }
-  // err := r.Resolver.Coll.Actions().Put(&input).Get(&got).Do(ctx)
-  err := r.Resolver.Coll.Put(ctx, &newBook)
-  if err != nil {
-    log.Fatalln(err)
-    return nil, err
-  }
+	newBook := model.Book{
+		ID:    fmt.Sprint(rand.Int()),
+		Title: input.Title,
+		Price: input.Price,
+		Foo:   input.Foo,
+	}
+	// err := r.Resolver.Coll.Actions().Put(&input).Get(&got).Do(ctx)
+	err := r.Resolver.Coll.Put(ctx, &newBook)
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
 
-  got := &model.Book{ ID: newBook.ID }
-  err = r.Resolver.Coll.Get(ctx, got)
-  if err != nil {
-    log.Fatalln(err)
-    return nil, err
-  }
+	got := &model.Book{ID: newBook.ID}
+	err = r.Resolver.Coll.Get(ctx, got)
+	if err != nil {
+		log.Fatalln(err)
+		return nil, err
+	}
 
-  return got, nil
+	return got, nil
 }
 
 func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
 	iter := r.Resolver.Coll.Query().Get(ctx)
 	defer iter.Stop()
 
-  dest := []*model.Book{}
+	dest := []*model.Book{}
 	for {
 		var book model.Book
 		err := iter.Next(ctx, &book)
 		if err == io.EOF {
 			break
 		} else if err != nil {
-      log.Fatalln(err)
+			log.Fatalln(err)
 			return nil, err
 		}
 
