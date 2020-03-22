@@ -8,6 +8,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/rs/cors v1.6.0
 	github.com/vektah/gqlparser/v2 v2.0.1
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	gitlab.com/hookactions/gqlgen-relay v1.0.1
