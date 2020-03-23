@@ -4,6 +4,18 @@
 
 scalar Any
 
+interface Node {
+    id: ID!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+
+
 type Book {
   id: ID!
   title: String!
@@ -11,7 +23,25 @@ type Book {
   foo: Any
 }
 
+type BookEdge {
+    cursor: String!
+    node: Book!
+}
+
+type BookConnection {
+    edges: [BookEdge]!
+    nodes: [Book!]!
+    pageInfo: PageInfo!
+    totalCount: Int
+}
+
+
 type Query {
+  books_connection(
+    first: Int
+    afterCursor: String
+    beforeCursor: String
+  ): BookConnection!
   books: [Book!]!
 }
 

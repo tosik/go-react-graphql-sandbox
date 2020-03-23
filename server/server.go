@@ -19,7 +19,7 @@ import (
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/model"
 )
 
-//go:generate sh -c "go run gitlab.com/hookactions/gqlgen-relay -pkg model -name Book -type *Book -cursor > graph/model/book_relay.go"
+//go:generate go run github.com/99designs/gqlgen generate"
 
 const defaultPort = "8080"
 
@@ -44,8 +44,8 @@ func main() {
 
 func putSampleData(ctx context.Context, coll *docstore.Collection) error {
 	books := []model.Book{
-		{ID: "1", Title: "Alice In Wonderland", Price: 123, Foo: 98765},
-		{ID: "2", Title: "Cinderella", Price: 345, Foo: "STRING TYPE"},
+		{ID: graph.GenerateId(), Title: "Alice In Wonderland", Price: 123, Foo: 98765},
+		{ID: graph.GenerateId(), Title: "Cinderella", Price: 345, Foo: "STRING TYPE"},
 	}
 	for _, book := range books {
 		if err := coll.Put(ctx, &book); err != nil {
