@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 
 import ApolloClient from "apollo-boost";
@@ -54,13 +54,15 @@ const Books: React.FC = () => {
 }
 
 const CreateBookButton: React.FC = () => {
-  var [createBook, { data }] = useMutation(CREATE_BOOK_MUTATION)
+  var [createBook] = useMutation(CREATE_BOOK_MUTATION)
 
   return (
     <button onClick={
       e => {
         e.preventDefault()
-        createBook()
+        createBook().then((value) => {
+          console.log(value)
+        })
       }
     }> Create a book</button>
   )
