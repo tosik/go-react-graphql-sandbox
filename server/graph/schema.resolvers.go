@@ -11,6 +11,7 @@ import (
 
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/generated"
 	"github.com/tosik/go-react-graphql-sandbox/server/graph/model"
+	"gocloud.dev/docstore"
 )
 
 func (r *bookConnectionResolver) Nodes(ctx context.Context, obj *model.BookConnection) ([]*model.Book, error) {
@@ -41,9 +42,9 @@ func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) 
 	return got, nil
 }
 
-func (r *queryResolver) BooksConnection(ctx context.Context, first *int, afterCursor *string, beforeCursor *string) (*model.BookConnection, error) {
+func (r *queryResolver) Books(ctx context.Context, first *int, afterCursor *string, beforeCursor *string) (*model.BookConnection, error) {
 	paginationFunc := func(offset, limit int) (items []*model.Book, total *int, err error) {
-		iter := r.Resolver.Coll.Query().Get(ctx)
+		iter := r.Resolver.Coll.Query().OrderBy("ID", docstore.Descending).Limit(limit).Get(ctx)
 		defer iter.Stop()
 
 		sum := 0
@@ -68,27 +69,6 @@ func (r *queryResolver) BooksConnection(ctx context.Context, first *int, afterCu
 	dest, err := model.NewBookPage(10, first, afterCursor, beforeCursor, paginationFunc)
 
 	return dest, err
-}
-
-func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
-	iter := r.Resolver.Coll.Query().Get(ctx)
-	defer iter.Stop()
-
-	dest := []*model.Book{}
-	for {
-		var book model.Book
-		err := iter.Next(ctx, &book)
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatalln(err)
-			return nil, err
-		}
-
-		dest = append(dest, &book)
-	}
-
-	return dest, nil
 }
 
 // BookConnection returns generated.BookConnectionResolver implementation.

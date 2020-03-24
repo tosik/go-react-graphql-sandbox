@@ -37,12 +37,11 @@ type BookConnection {
 
 
 type Query {
-  books_connection(
+  books(
     first: Int
     afterCursor: String
     beforeCursor: String
   ): BookConnection!
-  books: [Book!]!
 }
 
 input NewBook {

@@ -77,8 +77,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Books           func(childComplexity int) int
-		BooksConnection func(childComplexity int, first *int, afterCursor *string, beforeCursor *string) int
+		Books func(childComplexity int, first *int, afterCursor *string, beforeCursor *string) int
 	}
 }
 
@@ -89,8 +88,7 @@ type MutationResolver interface {
 	CreateBook(ctx context.Context, input model.NewBook) (*model.Book, error)
 }
 type QueryResolver interface {
-	BooksConnection(ctx context.Context, first *int, afterCursor *string, beforeCursor *string) (*model.BookConnection, error)
-	Books(ctx context.Context) ([]*model.Book, error)
+	Books(ctx context.Context, first *int, afterCursor *string, beforeCursor *string) (*model.BookConnection, error)
 }
 
 type executableSchema struct {
@@ -223,19 +221,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Books(childComplexity), true
-
-	case "Query.books_connection":
-		if e.complexity.Query.BooksConnection == nil {
-			break
-		}
-
-		args, err := ec.field_Query_books_connection_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_books_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.BooksConnection(childComplexity, args["first"].(*int), args["afterCursor"].(*string), args["beforeCursor"].(*string)), true
+		return e.complexity.Query.Books(childComplexity, args["first"].(*int), args["afterCursor"].(*string), args["beforeCursor"].(*string)), true
 
 	}
 	return 0, false
@@ -340,12 +331,11 @@ type BookConnection {
 
 
 type Query {
-  books_connection(
+  books(
     first: Int
     afterCursor: String
     beforeCursor: String
   ): BookConnection!
-  books: [Book!]!
 }
 
 input NewBook {
@@ -393,7 +383,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_books_connection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_books_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -964,47 +954,6 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_books_connection(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_books_connection_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().BooksConnection(rctx, args["first"].(*int), args["afterCursor"].(*string), args["beforeCursor"].(*string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.BookConnection)
-	fc.Result = res
-	return ec.marshalNBookConnection2ᚖgithubᚗcomᚋtosikᚋgoᚑreactᚑgraphqlᚑsandboxᚋserverᚋgraphᚋmodelᚐBookConnection(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_books(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1020,9 +969,16 @@ func (ec *executionContext) _Query_books(ctx context.Context, field graphql.Coll
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_books_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Books(rctx)
+		return ec.resolvers.Query().Books(rctx, args["first"].(*int), args["afterCursor"].(*string), args["beforeCursor"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1034,9 +990,9 @@ func (ec *executionContext) _Query_books(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Book)
+	res := resTmp.(*model.BookConnection)
 	fc.Result = res
-	return ec.marshalNBook2ᚕᚖgithubᚗcomᚋtosikᚋgoᚑreactᚑgraphqlᚑsandboxᚋserverᚋgraphᚋmodelᚐBookᚄ(ctx, field.Selections, res)
+	return ec.marshalNBookConnection2ᚖgithubᚗcomᚋtosikᚋgoᚑreactᚑgraphqlᚑsandboxᚋserverᚋgraphᚋmodelᚐBookConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2411,20 +2367,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "books_connection":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_books_connection(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "books":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
